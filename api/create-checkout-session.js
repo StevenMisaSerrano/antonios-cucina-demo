@@ -20,7 +20,8 @@ module.exports = async (req, res) => {
   const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
   const origin = req.headers.origin || `https://${req.headers.host}`;
   const cartItems = Array.isArray(req.body && req.body.items) ? req.body.items : [];
+  const fulfillment = (req.body && req.body.fulfillment) || null;
 
-  const { status, body } = await createCheckoutSession(stripe, cartItems, origin);
+  const { status, body } = await createCheckoutSession(stripe, cartItems, origin, fulfillment);
   res.status(status).json(body);
 };

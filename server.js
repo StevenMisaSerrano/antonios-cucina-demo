@@ -22,8 +22,9 @@ app.use(express.static(__dirname));
 // so the frontend hits the same URL locally and in production.
 app.post("/api/create-checkout-session", async (req, res) => {
   const cartItems = Array.isArray(req.body.items) ? req.body.items : [];
+  const fulfillment = req.body.fulfillment || null;
   const origin = req.headers.origin || `${req.protocol}://${req.get("host")}`;
-  const { status, body } = await createCheckoutSession(stripe, cartItems, origin);
+  const { status, body } = await createCheckoutSession(stripe, cartItems, origin, fulfillment);
   res.status(status).json(body);
 });
 

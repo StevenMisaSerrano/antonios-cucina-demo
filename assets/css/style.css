@@ -346,6 +346,86 @@ body.cart-open { overflow: hidden; }
   text-align: right;
 }
 
+/* Cart fulfillment (pickup / delivery) --------------------------------------- */
+.cart-fulfillment { padding: 18px 0 6px; }
+.cart-section-title {
+  margin: 0 0 12px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--maroon-dark);
+}
+
+.fulfillment-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.fulfillment-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 10px;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.fulfillment-option:hover { border-color: var(--maroon); }
+.fulfillment-option.selected {
+  border-color: var(--maroon);
+  background: var(--maroon);
+  color: var(--white);
+}
+.fulfillment-option input { accent-color: var(--maroon); }
+
+.fulfillment-detail {
+  background: var(--cream-light);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 13.5px;
+}
+
+.pickup-confirm p { margin: 0 0 4px; color: var(--ink-soft); }
+.pickup-confirm-label {
+  font-weight: 600;
+  color: var(--ink) !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 11px !important;
+  margin-bottom: 6px !important;
+}
+
+.delivery-form { display: flex; flex-direction: column; gap: 10px; }
+.delivery-form label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.delivery-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.delivery-form input {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: var(--radius);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  color: var(--ink);
+  background: var(--white);
+}
+.delivery-form input:focus {
+  outline: none;
+  border-color: var(--maroon);
+}
+
 .cart-drawer-foot {
   padding: 20px 24px 24px;
   border-top: 1px solid rgba(0,0,0,0.08);

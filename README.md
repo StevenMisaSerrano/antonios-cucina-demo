@@ -132,6 +132,26 @@ numbers are entered on Stripe's page, never on this site.
 - All of this runs against your Stripe account's **test mode** — the keys
   starting `sk_test_...` — so nothing here moves real money.
 
+### Pickup vs. delivery
+
+Before checkout, the cart drawer requires choosing **Pickup** or
+**Delivery**:
+
+- **Pickup** just shows the restaurant's address/hours as a confirmation —
+  nothing to fill in.
+- **Delivery** requires a street address, city, and ZIP before the
+  Checkout button will proceed (validated both in the drawer and again on
+  the server — `lib/checkout-session.js`'s `normalizeFulfillment()`).
+
+The choice (and delivery address, if any) is attached to the Stripe
+Checkout Session as `metadata` — `fulfillment_method`, and
+`delivery_street` / `delivery_city` / `delivery_zip` when applicable — and
+copied onto the resulting PaymentIntent too, so it's visible on both the
+Session and the Payment/charge in the Stripe Dashboard. It's also passed
+through `success_url`'s query string so `success.html` can show "ready for
+pickup at..." or "delivered to...". This is order-intake only: there's no
+delivery radius check, delivery fee, or driver assignment.
+
 ### Before this can go live for a real restaurant
 
 1. **Swap in live API keys.** Test keys (`sk_test_...`) only work with

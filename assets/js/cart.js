@@ -1,12 +1,22 @@
 /* Simple client-side cart shared across pages via localStorage,
    plus a drawer UI and Stripe Checkout (test mode) handoff. */
 
+const PICKUP_ADDRESS = "220 S Main St, Alturas, CA 96101";
+const PICKUP_HOURS = "Open Mon–Sun · 11AM–9PM";
+
 function cartMoney(n) {
   return "$" + n.toFixed(2);
 }
 
 function cartLineKey(name, size) {
   return name + "|" + (size || "");
+}
+
+function escapeAttr(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;");
 }
 
 const Cart = {
@@ -80,6 +90,43 @@ const Cart = {
   }
 };
 
+// Pickup vs delivery choice, required before checkout. Persisted like the
+// cart so it survives navigating between index.html and menu.html.
+const Fulfillment = {
+  key: "antonios_fulfillment",
+
+  get() {
+    try {
+      return { method: null, street: "", city: "", zip: "", ...JSON.parse(localStorage.getItem(this.key)) };
+    } catch (e) {
+      return { method: null, street: "", city: "", zip: "" };
+    }
+  },
+
+  save(data) {
+    localStorage.setItem(this.key, JSON.stringify(data));
+  },
+
+  update(patch) {
+    const next = { ...this.get(), ...patch };
+    this.save(next);
+    return next;
+  },
+
+  clear() {
+    localStorage.removeItem(this.key);
+  },
+
+  isValid() {
+    const f = this.get();
+    if (f.method === "pickup") return true;
+    if (f.method === "delivery") {
+      return !!(f.street.trim() && f.city.trim() && f.zip.trim());
+    }
+    return false;
+  }
+};
+
 const CartDrawer = {
   built: false,
 
@@ -99,7 +146,10 @@ const CartDrawer = {
         <h3>Your Order</h3>
         <button class="cart-drawer-close" data-cart-close aria-label="Close cart">&times;</button>
       </div>
-      <div class="cart-drawer-body" data-cart-body></div>
+      <div class="cart-drawer-body">
+        <div data-cart-lines></div>
+        <div class="cart-fulfillment" data-cart-fulfillment></div>
+      </div>
       <div class="cart-drawer-foot">
         <div class="cart-total-row">
           <span>Total</span>
@@ -117,7 +167,7 @@ const CartDrawer = {
     overlay.addEventListener("click", () => this.close());
     drawer.querySelector("[data-cart-close]").addEventListener("click", () => this.close());
 
-    drawer.querySelector("[data-cart-body]").addEventListener("click", (e) => {
+    drawer.querySelector("[data-cart-lines]").addEventListener("click", (e) => {
       const incBtn = e.target.closest("[data-cart-inc]");
       const decBtn = e.target.closest("[data-cart-dec]");
       if (!incBtn && !decBtn) return;
@@ -130,6 +180,19 @@ const CartDrawer = {
       else Cart.removeOne(line.name, line.size);
     });
 
+    const fulfillmentEl = drawer.querySelector("[data-cart-fulfillment]");
+    fulfillmentEl.addEventListener("change", (e) => {
+      const radio = e.target.closest("[data-fulfillment-method]");
+      if (!radio) return;
+      Fulfillment.update({ method: radio.value });
+      this.renderFulfillment();
+    });
+    fulfillmentEl.addEventListener("input", (e) => {
+      const field = e.target.closest("[data-fulfillment-field]");
+      if (!field) return;
+      Fulfillment.update({ [field.dataset.fulfillmentField]: field.value });
+    });
+
     drawer.querySelector("[data-cart-checkout]").addEventListener("click", () => this.checkout());
 
     document.addEventListener("keydown", (e) => {
@@ -140,6 +203,7 @@ const CartDrawer = {
   open() {
     this.build();
     this.render();
+    this.renderFulfillment();
     document.querySelector("[data-cart-overlay]").classList.add("open");
     document.querySelector("[data-cart-drawer]").classList.add("open");
     document.body.classList.add("cart-open");
@@ -155,21 +219,22 @@ const CartDrawer = {
 
   render() {
     if (!this.built) return;
-    const body = document.querySelector("[data-cart-body]");
+    const linesEl = document.querySelector("[data-cart-lines]");
     const totalEl = document.querySelector("[data-cart-total]");
     const checkoutBtn = document.querySelector("[data-cart-checkout]");
     const lines = Cart.summary();
 
     if (lines.length === 0) {
-      body.innerHTML = `
+      linesEl.innerHTML = `
         <div class="cart-empty">
           <p>Your cart is empty.</p>
           <a href="menu.html" class="btn btn-outline-maroon">Browse the Menu</a>
         </div>
       `;
       checkoutBtn.disabled = true;
+      document.querySelector("[data-cart-fulfillment]").innerHTML = "";
     } else {
-      body.innerHTML = lines
+      linesEl.innerHTML = lines
         .map((line) => {
           const key = cartLineKey(line.name, line.size);
           return `
@@ -189,9 +254,65 @@ const CartDrawer = {
         })
         .join("");
       checkoutBtn.disabled = false;
+      // Only (re)build the fulfillment section the first time items appear —
+      // rebuilding it on every quantity change would blow away in-progress
+      // typing in the delivery address fields.
+      if (!document.querySelector("[data-cart-fulfillment]").innerHTML.trim()) {
+        this.renderFulfillment();
+      }
     }
 
     totalEl.textContent = cartMoney(Cart.total());
+  },
+
+  renderFulfillment() {
+    const container = document.querySelector("[data-cart-fulfillment]");
+    if (!container) return;
+    if (Cart.summary().length === 0) {
+      container.innerHTML = "";
+      return;
+    }
+
+    const f = Fulfillment.get();
+    container.innerHTML = `
+      <h4 class="cart-section-title">Pickup or Delivery?</h4>
+      <div class="fulfillment-toggle">
+        <label class="fulfillment-option${f.method === "pickup" ? " selected" : ""}">
+          <input type="radio" name="fulfillment-method" value="pickup" data-fulfillment-method ${f.method === "pickup" ? "checked" : ""}>
+          Pickup
+        </label>
+        <label class="fulfillment-option${f.method === "delivery" ? " selected" : ""}">
+          <input type="radio" name="fulfillment-method" value="delivery" data-fulfillment-method ${f.method === "delivery" ? "checked" : ""}>
+          Delivery
+        </label>
+      </div>
+      ${
+        f.method === "pickup"
+          ? `<div class="fulfillment-detail pickup-confirm">
+               <p class="pickup-confirm-label">Pickup Location</p>
+               <p>${PICKUP_ADDRESS}</p>
+               <p>${PICKUP_HOURS}</p>
+             </div>`
+          : ""
+      }
+      ${
+        f.method === "delivery"
+          ? `<div class="fulfillment-detail delivery-form">
+               <label>Street Address
+                 <input type="text" data-fulfillment-field="street" value="${escapeAttr(f.street)}" placeholder="123 Main St">
+               </label>
+               <div class="delivery-form-row">
+                 <label>City
+                   <input type="text" data-fulfillment-field="city" value="${escapeAttr(f.city)}" placeholder="Alturas">
+                 </label>
+                 <label>ZIP
+                   <input type="text" inputmode="numeric" data-fulfillment-field="zip" value="${escapeAttr(f.zip)}" placeholder="96101">
+                 </label>
+               </div>
+             </div>`
+          : ""
+      }
+    `;
   },
 
   async checkout() {
@@ -201,6 +322,19 @@ const CartDrawer = {
     if (lines.length === 0) return;
 
     errorEl.hidden = true;
+
+    const fulfillment = Fulfillment.get();
+    if (!fulfillment.method) {
+      errorEl.textContent = "Please choose Pickup or Delivery before checking out.";
+      errorEl.hidden = false;
+      return;
+    }
+    if (fulfillment.method === "delivery" && !Fulfillment.isValid()) {
+      errorEl.textContent = "Please fill in your delivery street address, city, and ZIP before checking out.";
+      errorEl.hidden = false;
+      return;
+    }
+
     btn.disabled = true;
     const originalLabel = btn.textContent;
     btn.textContent = "Redirecting to checkout…";
@@ -210,7 +344,16 @@ const CartDrawer = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: lines.map((l) => ({ name: l.name, size: l.size, qty: l.qty }))
+          items: lines.map((l) => ({ name: l.name, size: l.size, qty: l.qty })),
+          fulfillment:
+            fulfillment.method === "delivery"
+              ? {
+                  method: "delivery",
+                  street: fulfillment.street.trim(),
+                  city: fulfillment.city.trim(),
+                  zip: fulfillment.zip.trim()
+                }
+              : { method: "pickup" }
         })
       });
       const data = await res.json();
