@@ -183,7 +183,31 @@ a { color: inherit; text-decoration: none; }
 }
 .header-actions .btn { padding: 12px 20px; font-size: 12px; }
 
-.nav-toggle { display: none; }
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.nav-toggle-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 .cart-fab.bump { transform: scale(1.06); transition: transform 0.15s ease; }
 
@@ -462,6 +486,33 @@ body.cart-open { overflow: hidden; }
 
 /* Responsive ---------------------------------------------------------------- */
 @media (max-width: 900px) {
-  .main-nav { display: none; }
+  .nav-toggle { display: inline-flex; }
+
+  /* Adding the toggle button to a 3-item flex row (toggle/logo/actions)
+     needs a bit more breathing room reclaimed on narrow phones. */
+  .header-inner { padding: 14px 16px; gap: 8px; }
+  .logo-main { font-size: 20px; }
+  .logo-sub { font-size: 8px; letter-spacing: 2px; }
+  .header-actions { gap: 8px; }
+  .header-actions .btn { padding: 10px 14px; font-size: 11px; }
+
+  .main-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex: none;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--cream-light);
+    padding: 8px 16px 20px;
+    box-shadow: 0 16px 24px rgba(0,0,0,0.12);
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+  .main-nav.open { display: flex; }
+  .main-nav a { padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .main-nav a:last-child { border-bottom: none; }
+
   .header-actions .btn span.label { display: none; }
 }
