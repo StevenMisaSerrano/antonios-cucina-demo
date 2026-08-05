@@ -57,7 +57,14 @@ items use a single `price` number.
   pasta/marinara/alfredo/salads/appetizers/subs/burgers/desserts/drinks). If
   your real menu has more items or a "Pizza Ricardo" description that got cut
   off on screen, add them in `menu-data.js`.
-- Photos in `assets/img/` are labeled placeholders — drop in your real photos
-  with the same filenames and they'll appear automatically.
+- Photos in `assets/img/` are now free-to-use stock photos (Pexels License —
+  free for commercial use, no attribution required) standing in for real
+  photos of the restaurant. Swap in the owner's actual photos with the same
+  filenames whenever they're available. Source photos, for reference:
+  - `hero.jpg` — pexels.com/photo/5848160
+  - `pizza-hero.jpg` / `featured-pizza.jpg` — pexels.com/photo/31596394
+  - `pasta-hero.jpg` / `featured-alfredo.jpg` — pexels.com/photo/31269836
+  - `salad-hero.jpg` / `featured-salad.jpg` — pexels.com/photo/33158331
+  - `dining-room.jpg` — pexels.com/photo/14590691
 - The cart is a simple localStorage counter for now, not a real checkout —
   good candidate for your first Claude Code session on this project.
