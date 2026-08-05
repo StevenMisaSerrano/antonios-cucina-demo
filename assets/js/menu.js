@@ -36,7 +36,7 @@ function renderMenuItem(item) {
           ? `<label class="option-check"><input type="checkbox" /> ${item.addOn}</label>`
           : ""
       }
-      <button class="add-btn" data-item="${item.name}" data-price="${basePrice}">+ Add</button>
+      <button class="add-btn" data-item="${item.name}" data-price="${basePrice}"${hasSizes ? ` data-size="${optionKeys[0]}"` : ""}>+ Add</button>
     </div>
   `;
 }

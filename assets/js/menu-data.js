@@ -145,3 +145,8 @@ const MENU = {
     ]
   }
 };
+
+// Also usable from Node (server.js requires this to validate cart prices server-side).
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = MENU;
+}
