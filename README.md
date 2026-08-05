@@ -12,9 +12,14 @@ antonios-cucina/
 ├── menu.html           # Full menu with category tabs (renders from menu-data.js)
 ├── success.html        # Stripe Checkout success_url landing page
 ├── cancel.html         # Stripe Checkout cancel_url landing page
-├── server.js           # Express server: static files + /create-checkout-session
+├── server.js           # Express server for LOCAL dev only: static files + /api/create-checkout-session
+├── api/
+│   └── create-checkout-session.js   # Vercel serverless function (same endpoint, used in production)
+├── lib/
+│   └── checkout-session.js          # Shared pricing/session logic used by both of the above
+├── vercel.json           # Tells Vercel this isn't a framework — deploy the root as static + /api
 ├── package.json
-├── .env.example         # Copy to .env and add your Stripe TEST secret key
+├── .env.example         # Copy to .env and add your Stripe TEST secret key (local dev)
 ├── assets/
 │   ├── css/
 │   │   ├── style.css   # Shared tokens, header, footer, buttons, cart drawer
@@ -22,7 +27,7 @@ antonios-cucina/
 │   │   └── menu.css    # Menu page / tabs / item cards
 │   ├── js/
 │   │   ├── menu-data.js   # ← EDIT THIS to change items/prices/categories
-│   │   │                    (also required by server.js to validate prices)
+│   │   │                    (also required server-side to validate prices)
 │   │   ├── menu.js        # Renders tabs + item cards from menu-data.js
 │   │   └── cart.js        # Cart state, drawer UI, Stripe Checkout handoff
 │   └── img/             # Placeholder images — swap these for real photos
@@ -47,6 +52,30 @@ cp .env.example .env        # then paste your Stripe TEST secret key into .env
 npm start
 # then visit http://localhost:4242
 ```
+
+## Deploying to Vercel
+
+The site deploys to Vercel with no build step: the HTML/CSS/JS at the repo
+root are served as static files, and `api/create-checkout-session.js` runs
+as a serverless function so checkout keeps working in production.
+`server.js` is not used on Vercel — it's local-dev only.
+
+```bash
+npm install -g vercel   # if you don't have it
+vercel login            # opens your browser / email to authorize
+vercel --prod           # deploys and prints the live URL
+```
+
+After the first deploy, add your Stripe TEST secret key so checkout works
+in production — this has to be done in the Vercel dashboard (or `vercel
+env add`), never committed to the repo:
+
+1. Vercel dashboard → your project → **Settings → Environment Variables**.
+2. Add `STRIPE_SECRET_KEY` = your `sk_test_...` key, for the Production
+   environment (and Preview, if you want checkout to work on preview
+   deployments too).
+3. Redeploy (`vercel --prod`) so the function picks up the new variable —
+   env var changes don't apply to deployments that already happened.
 
 ## Using this with Claude Code
 
@@ -91,9 +120,11 @@ server, which creates a [Stripe Checkout](https://stripe.com/docs/payments/check
 Session and redirects the browser to Stripe's hosted payment page. Card
 numbers are entered on Stripe's page, never on this site.
 
-- The server (`server.js`) re-looks-up every item's price from
-  `menu-data.js` before creating the session — it never trusts a price sent
-  by the browser, so someone can't tamper with the request to pay less.
+- Both `server.js` (local dev) and `api/create-checkout-session.js` (Vercel,
+  production) share `lib/checkout-session.js`, which re-looks-up every
+  item's price from `menu-data.js` before creating the session — neither
+  ever trusts a price sent by the browser, so someone can't tamper with the
+  request to pay less.
 - Use [Stripe's test card](https://stripe.com/docs/testing) `4242 4242 4242 4242`,
   any future expiry, any CVC, any ZIP to complete a test payment.
 - On success, Stripe redirects to `success.html`, which clears the local
@@ -123,7 +154,7 @@ numbers are entered on Stripe's page, never on this site.
    [Stripe Tax](https://stripe.com/tax) on the Checkout Session or compute
    it yourself before creating line items.
 5. **Add basic rate limiting / abuse protection** on
-   `/create-checkout-session` — it's currently open to anyone who can reach
-   the server.
+   `/api/create-checkout-session` — it's currently open to anyone who can
+   reach the site.
 6. **Persist orders somewhere** (a database, an order-management tool) —
    right now a completed order only exists inside Stripe's dashboard.

@@ -206,7 +206,7 @@ const CartDrawer = {
     btn.textContent = "Redirecting to checkout…";
 
     try {
-      const res = await fetch("/create-checkout-session", {
+      const res = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
