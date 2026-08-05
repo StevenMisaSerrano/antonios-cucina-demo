@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reservations | Antonio's Cucina Italiana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500;1,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css" />
+<link rel="stylesheet" href="assets/css/reservations.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <nav class="main-nav">
+      <a href="index.html#order">Order Online</a>
+      <a href="menu.html">Menu</a>
+      <a href="reservations.html" class="active">Reservations</a>
+      <a href="index.html#reviews">Reviews</a>
+      <a href="index.html#visit">Visit Us</a>
+    </nav>
+    <div class="logo">
+      <a href="index.html">
+        <div class="logo-main">Antonio's</div>
+        <div class="logo-sub">Cucina Italiana</div>
+      </a>
+    </div>
+    <div class="header-actions">
+      <a href="tel:+15302335600" class="btn btn-outline-maroon"><span>&#128222;</span><span class="label">Call Us</span></a>
+      <a href="menu.html" class="btn btn-maroon">Order Now</a>
+    </div>
+  </div>
+</header>
+
+<section class="container reservations-intro">
+  <span class="section-eyebrow">Request a Table</span>
+  <h1 class="section-title">Reservations</h1>
+  <div class="divider"></div>
+  <p>
+    This is a reservation <em>request</em>, not a live booking &mdash; we don't
+    check live table availability yet. Send us your details and our team
+    will call to confirm.
+  </p>
+</section>
+
+<section class="container reservations-section">
+  <form id="reservation-form" class="reservation-form">
+    <div class="reservation-grid">
+      <label>Name
+        <input type="text" name="name" autocomplete="name" required>
+      </label>
+      <label>Phone
+        <input type="tel" name="phone" autocomplete="tel" required>
+      </label>
+    </div>
+    <div class="reservation-grid">
+      <label>Email <span class="optional-tag">(optional)</span>
+        <input type="email" name="email" autocomplete="email">
+      </label>
+      <label>Party Size
+        <input type="number" name="partySize" min="1" max="20" step="1" placeholder="2" required>
+      </label>
+    </div>
+    <div class="reservation-grid">
+      <label>Preferred Date
+        <input type="date" name="date" required>
+      </label>
+      <label>Preferred Time
+        <input type="time" name="time" required>
+      </label>
+    </div>
+    <label class="reservation-full">Special Requests <span class="optional-tag">(optional)</span>
+      <textarea name="specialRequests" rows="4" placeholder="Anniversary, allergies, high chair needed, etc."></textarea>
+    </label>
+    <button type="submit" class="btn btn-maroon btn-block">Request Reservation</button>
+  </form>
+
+  <div id="reservation-confirmation" class="reservation-confirmation" hidden>
+    <h2>Grazie!</h2>
+    <p>Thanks! We'll call to confirm your reservation shortly.</p>
+    <p class="reservation-summary"></p>
+    <a href="index.html" class="btn btn-outline-maroon">Back to Home</a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-name">Antonio's Cucina Italiana</div>
+  <p>220 S Main St, Alturas, CA 96101 &middot; (530) 233-5600</p>
+  <p>Open Mon&ndash;Sun &middot; 11AM&ndash;9PM &middot; Dine-In &middot; Takeout &middot; Delivery</p>
+  <p class="badge">&#x1F1FA;&#x1F1F8; Proud Veteran-Owned Business &middot; &copy; 2026 Antonio's Cucina Italiana</p>
+</footer>
+
+<button class="cart-fab">&#128722; View Cart <span class="count" data-cart-count>0</span></button>
+
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/reservations.js"></script>
+</body>
+</html>

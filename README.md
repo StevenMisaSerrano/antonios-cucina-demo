@@ -10,6 +10,7 @@ that wires the cart up to Stripe Checkout in test mode.
 antonios-cucina/
 ├── index.html          # Home page (hero, features, reviews, visit-us, footer)
 ├── menu.html           # Full menu with category tabs (renders from menu-data.js)
+├── reservations.html   # Reservation request form (no backend yet — see "Reservations" below)
 ├── success.html        # Stripe Checkout success_url landing page
 ├── cancel.html         # Stripe Checkout cancel_url landing page
 ├── server.js           # Express server for LOCAL dev only: static files + /api/create-checkout-session
@@ -22,14 +23,16 @@ antonios-cucina/
 ├── .env.example         # Copy to .env and add your Stripe TEST secret key (local dev)
 ├── assets/
 │   ├── css/
-│   │   ├── style.css   # Shared tokens, header, footer, buttons, cart drawer
-│   │   ├── home.css    # Home page sections
-│   │   └── menu.css    # Menu page / tabs / item cards
+│   │   ├── style.css         # Shared tokens, header, footer, buttons, cart drawer
+│   │   ├── home.css          # Home page sections
+│   │   ├── menu.css          # Menu page / tabs / item cards
+│   │   └── reservations.css  # Reservation form layout
 │   ├── js/
 │   │   ├── menu-data.js   # ← EDIT THIS to change items/prices/categories
 │   │   │                    (also required server-side to validate prices)
 │   │   ├── menu.js        # Renders tabs + item cards from menu-data.js
-│   │   └── cart.js        # Cart state, drawer UI, Stripe Checkout handoff
+│   │   ├── cart.js        # Cart state, drawer UI, Stripe Checkout handoff
+│   │   └── reservations.js  # Reservation form validation + submit handling
 │   └── img/             # Placeholder images — swap these for real photos
 ```
 
@@ -178,3 +181,29 @@ delivery radius check, delivery fee, or driver assignment.
    reach the site.
 6. **Persist orders somewhere** (a database, an order-management tool) —
    right now a completed order only exists inside Stripe's dashboard.
+
+## Reservations
+
+`reservations.html` collects a reservation **request** — name, phone,
+party size, preferred date/time (all required), plus optional email and
+special requests. Submitting it doesn't check real table availability;
+it just shows "Thanks! We'll call to confirm your reservation shortly."
+and logs the submission with `console.log` (see `assets/js/reservations.js`)
+so you can see what a real backend would receive.
+
+There's no backend behind this yet — a submission today only exists in
+the visitor's browser console. Before this could take real requests,
+pick one:
+
+- **Serverless function + notification service** — a Vercel function
+  (like `api/create-checkout-session.js`) that receives the form POST and
+  sends an email (e.g. [Resend](https://resend.com)) or text
+  (e.g. [Twilio](https://www.twilio.com)) to the restaurant. Simplest to
+  add given the Stripe integration already established that pattern here.
+- **A lightweight backend + database** — store each request (Postgres,
+  SQLite, Airtable, etc.) so the owner can view/manage them in a simple
+  admin view, rather than relying on a text/email arriving reliably.
+
+Either way, keep the "request, not confirmed" framing in the UI — the
+restaurant still needs to call back and confirm before a table is
+actually held.
