@@ -113,4 +113,15 @@
 @media (max-width: 720px) {
   .menu-items { grid-template-columns: 1fr; }
   .menu-items .menu-item:nth-child(odd) { border-right: none; }
+
+  /* .menu-panel's 32px side padding was the "gap" pushing single-column
+     cards off the left edge — drop it so the card list runs flush with
+     the screen; each .menu-item keeps its own internal padding. */
+  .menu-panel { padding: 0; }
+
+  /* Long price strings (e.g. "S $14.69 · M $16.79 · L $18.89 · X $23.09")
+     don't fit beside the item name at phone widths — stack instead of
+     forcing them onto one nowrap line that overflows the card. */
+  .menu-item-top { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .menu-item .price { white-space: normal; }
 }
