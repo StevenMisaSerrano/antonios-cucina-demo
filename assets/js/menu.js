@@ -59,7 +59,7 @@ function renderCategory(key) {
 document.addEventListener("DOMContentLoaded", () => {
   const tabsWrap = document.getElementById("menuTabs");
   const panelsWrap = document.getElementById("menuPanels");
-  const order = ["pizza", "pasta", "marinara", "alfredo", "salads", "appetizers", "subs", "burgers", "desserts", "drinks"];
+  const order = ["pizza", "pasta", "marinara", "oliveOilGarlic", "alfredo", "salads", "appetizers", "subs", "burgers", "desserts", "drinks"];
 
   order.forEach((key, i) => {
     const cat = MENU[key];

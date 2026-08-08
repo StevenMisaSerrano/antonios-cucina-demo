@@ -11,14 +11,14 @@ const MENU = {
       { name: "Classic Cheese Pizza", desc: "Hand-thrown dough, special tomato sauce, creamy mozzarella", prices: { Small: 14.69, Medium: 16.79, Large: 18.89, XL: 23.09 } },
       { name: "Pizza Pepperoni", desc: "The Classic Pizza in America", prices: { Small: 15.74, Medium: 17.84, Large: 20.99, XL: 25.19 } },
       { name: "Pizza Festa", desc: 'The "Everything" Festival Pie', prices: { Small: 17.84, Medium: 23.09, Large: 27.29, XL: 32.54 } },
-      { name: "Pizza Carne Amore", desc: "Pepperoni, salami, sausage, linguica, ground beef \u2014 our meat lover's pizza", prices: { Small: 18.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
-      { name: "Creamy Garlic Pizza with Veggies", desc: "Garlic sauce, black olives, tomatoes, bell peppers, mushrooms, red & green onion", prices: { Small: 18.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
-      { name: "Creamy Garlic Pizza with Chicken", desc: "Garlic sauce, chicken, red onion, tomato, mushrooms, green onions", prices: { Small: 18.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
-      { name: "Creamy Garlic Pizza with Meat", desc: "Garlic sauce, pepperoni, Italian sausage, mushrooms, tomato, green onions", prices: { Small: 18.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
+      { name: "Pizza Carne Amore", desc: "Pepperoni, salami, sausage, linguica, ground beef \u2014 our meat lover's pizza", prices: { Small: 16.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
+      { name: "Creamy Garlic Pizza with Veggies", desc: "Garlic sauce, black olives, tomatoes, bell peppers, mushrooms, red & green onion", prices: { Small: 16.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
+      { name: "Creamy Garlic Pizza with Chicken", desc: "Garlic sauce, chicken, red onion, tomato, mushrooms, green onions", prices: { Small: 16.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
+      { name: "Creamy Garlic Pizza with Meat", desc: "Garlic sauce, pepperoni, Italian sausage, mushrooms, tomato, green onions", prices: { Small: 16.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
       { name: "Pizza Canadian", desc: "Canadian bacon and pineapple", prices: { Small: 16.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
-      { name: "Pizza Alfredo", desc: "Antonio's famous white sauce, Italian sausage, diced tomato, green onions", prices: { Small: 18.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
-      { name: "Pizza Primavera", desc: "Veggie lover's pizza \u2014 bell peppers, olives, tomatoes, mushrooms", prices: { Small: 18.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
-      { name: "Pizza Ricardo", desc: "Named after Tony's best friend \u2014 pepperoni, Italian sausage, and extra cheese", prices: { Small: 18.79, Medium: 23.09, Large: 27.29, XL: 32.54 } }
+      { name: "Pizza Alfredo", desc: "Antonio's famous white sauce, Italian sausage, diced tomato, green onions", prices: { Small: 16.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
+      { name: "Pizza Primavera", desc: "Veggie lover's pizza \u2014 bell peppers, olives, tomatoes, mushrooms", prices: { Small: 16.79, Medium: 23.09, Large: 27.29, XL: 32.54 } },
+      { name: "Pizza Ricardo", desc: "Named after Tony's best friend \u2014 pepperoni, Italian sausage, and extra cheese", prices: { Small: 16.79, Medium: 23.09, Large: 27.29, XL: 32.54 } }
     ]
   },
 
@@ -34,7 +34,8 @@ const MENU = {
       { name: "Meat Lasagna", desc: "Meat and cheese lasagna with marinara and mozzarella, then baked", prices: { "Regolare (Full)": 20.98, "Meta (Half)": 12.59 } },
       { name: "Cheese Tortellini in Creamy Pesto", desc: "Tri-colored cheese stuffed tortellini in cream pesto sauce", prices: { "Regolare (Full)": 20.98, "Meta (Half)": 12.59 } },
       { name: "Ravioli Marinara", desc: "Meat filled ravioli smothered with marinara, w/ baked cheese", prices: { "Regolare (Full)": 20.98, "Meta (Half)": 12.59 }, addOn: "Baked Cheese (Reg +$3.00 / Meta +$2.00)" },
-      { name: "Ravioli Alfredo", desc: "Meat filled ravioli with alfredo, w/ baked cheese", prices: { "Regolare (Full)": 20.98, "Meta (Half)": 12.59 }, addOn: "Baked Cheese (Reg +$3.00 / Meta +$2.00)" }
+      { name: "Ravioli Alfredo", desc: "Meat filled ravioli with alfredo, w/ baked cheese", prices: { "Regolare (Full)": 20.98, "Meta (Half)": 12.59 }, addOn: "Baked Cheese (Reg +$3.00 / Meta +$2.00)" },
+      { name: "Spicy Baked Pasta", desc: "Spicy marinara with sausage and red hot pepper flakes", prices: { "Regolare (Full)": 20.98, "Meta (Half)": 12.59 } }
     ]
   },
 
@@ -48,8 +49,20 @@ const MENU = {
       { name: "Meatballs", desc: "Marinara with beef and sausage meatballs", prices: { "Regolare (Full)": 16.79, "Meta (Half)": 11.54 } },
       { name: "Salsiccia", desc: "Marinara with Italian sausage", prices: { "Regolare (Full)": 16.79, "Meta (Half)": 11.54 } },
       { name: "Red Clam", desc: "Marinara with sea clams and green onions", prices: { "Regolare (Full)": 16.79, "Meta (Half)": 11.54 } },
-      { name: "Meat Sauce", desc: "Marinara with ground beef", prices: { "Regolare (Full)": 16.79, "Meta (Half)": 11.54 } },
-      { name: "Spicy Baked Pasta", desc: "Spicy marinara with sausage and red hot pepper flakes", prices: { "Regolare (Full)": 16.79, "Meta (Half)": 11.54 } }
+      { name: "Meat Sauce", desc: "Marinara with ground beef", prices: { "Regolare (Full)": 16.79, "Meta (Half)": 11.54 } }
+    ]
+  },
+
+  oliveOilGarlic: {
+    label: "Olive Oil & Garlic Pasta",
+    icon: "🧄",
+    note: "Served with salad and garlic bread",
+    sizePricing: false,
+    items: [
+      { name: "Chicken and Mushroom", desc: "", prices: { "Regolare (Full)": 19.61, "Meta (Half)": 12.59 } },
+      { name: "Sausage and Mushrooms", desc: "", prices: { "Regolare (Full)": 19.61, "Meta (Half)": 12.59 } },
+      { name: "Pepperoni and Olives", desc: "", prices: { "Regolare (Full)": 19.61, "Meta (Half)": 12.59 } },
+      { name: "Clam and Green Onions", desc: "", prices: { "Regolare (Full)": 19.61, "Meta (Half)": 12.59 } }
     ]
   },
 
@@ -106,7 +119,7 @@ const MENU = {
     sizePricing: false,
     items: [
       { name: "Meatball Sub", desc: "Meatballs in marinara with baked cheese on sourdough, curly fries or salad", prices: { "Regular": 15.39, "Meta (Half)": 13.19 } },
-      { name: "Italian Sub", desc: "Pepperoni, salami, Canadian bacon, baked cheese, lettuce, tomato, red onion, pepperoncini, house dressing", prices: { "Regular": 15.39, "Meta (Half)": 13.19 } },
+      { name: "Italian Sub", desc: "Pepperoni, salami, Canadian bacon, baked cheese, topped with red onion, tomato, pepperoncini, finished with house dressing.", prices: { "Regular": 15.39, "Meta (Half)": 13.19 } },
       { name: "Veggie Sub", desc: "Saut\u00e9ed veggies with baked cheese on sourdough, topped with house dressing", prices: { "Regular": 15.39, "Meta (Half)": 13.19 } }
     ]
   },
@@ -117,7 +130,7 @@ const MENU = {
     note: null,
     sizePricing: false,
     items: [
-      { name: "Hamburger Combo", desc: "Ground beef on sourdough with lettuce, tomato, pickles, onions, curly fries or salad", price: 14.29, addOn: "Add Cheese, Bacon, or Saut\u00e9ed Mushrooms" },
+      { name: "Hamburger Combo", desc: "Ground beef on sourdough with lettuce, tomato, pickles, onions, curly fries or salad", price: 14.29, addOn: "Add Cheese, Bacon, or Saut\u00e9ed Mushrooms \u2014 $2.50." },
       { name: "Chicken Strip Basket", desc: "Lightly breaded deep-fried chicken strips with seasoned curly fries", price: 9.89 }
     ]
   },
@@ -140,8 +153,8 @@ const MENU = {
     note: null,
     sizePricing: false,
     items: [
-      { name: "Soft Drinks", desc: "Pepsi, Diet Pepsi, Starry, Root Beer, Lemonade, Iced Tea, Coffee, Hot Tea", prices: { "Cup": 2.50, "Pitcher": 3.99 } },
-      { name: "2 Liter Sodas", desc: "", price: 4.99 }
+      { name: "Soft Drinks", desc: "Pepsi, Diet Pepsi, Starry, Root Beer, Lemonade, Iced Tea, Coffee, Decaf Coffee, Hot Tea", prices: { "Cup": 2.50, "Pitcher": 3.99 } },
+      { name: "2 Liter Sodas", desc: "Pepsi, Diet Pepsi, Starry, Root Beer", price: 4.99 }
     ]
   }
 };
