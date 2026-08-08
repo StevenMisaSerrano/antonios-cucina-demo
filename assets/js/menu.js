@@ -10,13 +10,16 @@ function sizeAbbrev(key) {
 
 function renderMenuItem(item) {
   const hasSizes = !!item.prices;
+  const hasFlavors = Array.isArray(item.flavors) && item.flavors.length > 0;
   const optionKeys = hasSizes ? Object.keys(item.prices) : [];
   const basePrice = hasSizes ? item.prices[optionKeys[0]] : item.price;
   const priceLabel = hasSizes
     ? optionKeys.map((k) => `${sizeAbbrev(k)} ${money(item.prices[k])}`).join(" \u00b7 ")
     : money(item.price);
 
-  const selectId = "sel-" + item.name.replace(/[^a-z0-9]/gi, "-").toLowerCase();
+  const idBase = item.name.replace(/[^a-z0-9]/gi, "-").toLowerCase();
+  const selectId = "sel-" + idBase;
+  const flavorId = "flavor-" + idBase;
 
   return `
     <div class="menu-item" data-name="${item.name}" data-base="${basePrice}">
@@ -25,6 +28,14 @@ function renderMenuItem(item) {
         <span class="price">${priceLabel}</span>
       </div>
       ${item.desc ? `<p class="desc">${item.desc}</p>` : ""}
+      ${
+        hasFlavors
+          ? `<select id="${flavorId}" class="flavor-select" data-flavor-select>
+              <option value="" disabled selected>Choose a flavor\u2026</option>
+              ${item.flavors.map((f) => `<option value="${f}">${f}</option>`).join("")}
+            </select>`
+          : ""
+      }
       ${
         hasSizes
           ? `<select id="${selectId}" class="size-select">
@@ -87,20 +98,43 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   panelsWrap.addEventListener("change", (e) => {
-    if (!e.target.classList.contains("size-select")) return;
-    const wrapper = e.target.closest(".menu-item");
-    const btn = wrapper.querySelector(".add-btn");
-    const opt = e.target.selectedOptions[0];
-    btn.dataset.price = opt.dataset.price;
-    btn.dataset.size = opt.value;
+    if (e.target.classList.contains("size-select")) {
+      const wrapper = e.target.closest(".menu-item");
+      const btn = wrapper.querySelector(".add-btn");
+      const opt = e.target.selectedOptions[0];
+      btn.dataset.price = opt.dataset.price;
+      btn.dataset.size = opt.value;
+      return;
+    }
+    if (e.target.hasAttribute("data-flavor-select")) {
+      e.target.classList.remove("invalid");
+    }
   });
 
   panelsWrap.addEventListener("click", (e) => {
     const btn = e.target.closest(".add-btn");
     if (!btn) return;
+
+    const wrapper = btn.closest(".menu-item");
+    const flavorSelect = wrapper.querySelector("[data-flavor-select]");
+    let flavor = null;
+
+    if (flavorSelect) {
+      flavor = flavorSelect.value;
+      if (!flavor) {
+        flavorSelect.classList.add("invalid");
+        flavorSelect.focus();
+        const original = btn.textContent;
+        btn.textContent = "Choose a Flavor";
+        setTimeout(() => (btn.textContent = original), 1200);
+        return;
+      }
+    }
+
     Cart.add({
       name: btn.dataset.item,
       size: btn.dataset.size || null,
+      flavor: flavor,
       price: parseFloat(btn.dataset.price)
     });
     const original = btn.textContent;

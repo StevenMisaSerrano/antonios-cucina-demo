@@ -153,8 +153,8 @@ const MENU = {
     note: null,
     sizePricing: false,
     items: [
-      { name: "Soft Drinks", desc: "Pepsi, Diet Pepsi, Starry, Root Beer, Lemonade, Iced Tea, Coffee, Decaf Coffee, Hot Tea", prices: { "Cup": 2.50, "Pitcher": 3.99 } },
-      { name: "2 Liter Sodas", desc: "Pepsi, Diet Pepsi, Starry, Root Beer", price: 4.99 }
+      { name: "Soft Drinks", desc: "", flavors: ["Pepsi", "Diet Pepsi", "Starry", "Root Beer", "Lemonade", "Iced Tea", "Coffee", "Decaf Coffee", "Hot Tea"], prices: { "Cup": 2.50, "Pitcher": 3.99 } },
+      { name: "2 Liter Sodas", desc: "", flavors: ["Pepsi", "Diet Pepsi", "Starry", "Root Beer"], price: 4.99 }
     ]
   }
 };

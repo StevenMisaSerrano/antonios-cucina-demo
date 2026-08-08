@@ -8,8 +8,8 @@ function cartMoney(n) {
   return "$" + n.toFixed(2);
 }
 
-function cartLineKey(name, size) {
-  return name + "|" + (size || "");
+function cartLineKey(name, size, flavor) {
+  return name + "|" + (size || "") + "|" + (flavor || "");
 }
 
 function escapeAttr(s) {
@@ -43,10 +43,12 @@ const Cart = {
     this.flashFab();
   },
 
-  // Removes a single unit of the given name/size (used by the drawer's − button).
-  removeOne(name, size) {
+  // Removes a single unit of the given name/size/flavor (used by the drawer's − button).
+  removeOne(name, size, flavor) {
     const items = this.get();
-    const idx = items.findIndex((i) => i.name === name && (i.size || "") === (size || ""));
+    const idx = items.findIndex(
+      (i) => i.name === name && (i.size || "") === (size || "") && (i.flavor || "") === (flavor || "")
+    );
     if (idx !== -1) items.splice(idx, 1);
     this.save(items);
   },
@@ -63,13 +65,19 @@ const Cart = {
     return this.get().reduce((sum, i) => sum + i.price, 0);
   },
 
-  // Groups individual unit entries into {name, size, price, qty, lineTotal} lines.
+  // Groups individual unit entries into {name, size, flavor, price, qty, lineTotal} lines.
   summary() {
     const byKey = new Map();
     this.get().forEach((item) => {
-      const key = cartLineKey(item.name, item.size);
+      const key = cartLineKey(item.name, item.size, item.flavor);
       if (!byKey.has(key)) {
-        byKey.set(key, { name: item.name, size: item.size || null, price: item.price, qty: 0 });
+        byKey.set(key, {
+          name: item.name,
+          size: item.size || null,
+          flavor: item.flavor || null,
+          price: item.price,
+          qty: 0
+        });
       }
       byKey.get(key).qty += 1;
     });
@@ -173,11 +181,11 @@ const CartDrawer = {
       if (!incBtn && !decBtn) return;
 
       const key = (incBtn || decBtn).dataset.cartInc || (incBtn || decBtn).dataset.cartDec;
-      const line = Cart.summary().find((l) => cartLineKey(l.name, l.size) === key);
+      const line = Cart.summary().find((l) => cartLineKey(l.name, l.size, l.flavor) === key);
       if (!line) return;
 
-      if (incBtn) Cart.add({ name: line.name, size: line.size, price: line.price });
-      else Cart.removeOne(line.name, line.size);
+      if (incBtn) Cart.add({ name: line.name, size: line.size, flavor: line.flavor, price: line.price });
+      else Cart.removeOne(line.name, line.size, line.flavor);
     });
 
     const fulfillmentEl = drawer.querySelector("[data-cart-fulfillment]");
@@ -236,17 +244,18 @@ const CartDrawer = {
     } else {
       linesEl.innerHTML = lines
         .map((line) => {
-          const key = cartLineKey(line.name, line.size);
+          const key = cartLineKey(line.name, line.size, line.flavor);
+          const label = line.flavor ? `${line.name} — ${line.flavor}` : line.name;
           return `
             <div class="cart-line">
               <div class="cart-line-info">
-                <div class="cart-line-name">${line.name}${line.size ? ` <span class="cart-line-size">(${line.size})</span>` : ""}</div>
+                <div class="cart-line-name">${label}${line.size ? ` <span class="cart-line-size">(${line.size})</span>` : ""}</div>
                 <div class="cart-line-price">${cartMoney(line.price)} each</div>
               </div>
               <div class="cart-line-qty">
-                <button type="button" data-cart-dec="${key}" aria-label="Remove one ${line.name}">&minus;</button>
+                <button type="button" data-cart-dec="${key}" aria-label="Remove one ${label}">&minus;</button>
                 <span>${line.qty}</span>
-                <button type="button" data-cart-inc="${key}" aria-label="Add one more ${line.name}">+</button>
+                <button type="button" data-cart-inc="${key}" aria-label="Add one more ${label}">+</button>
               </div>
               <div class="cart-line-total">${cartMoney(line.lineTotal)}</div>
             </div>
@@ -344,7 +353,7 @@ const CartDrawer = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: lines.map((l) => ({ name: l.name, size: l.size, qty: l.qty })),
+          items: lines.map((l) => ({ name: l.name, size: l.size, flavor: l.flavor, qty: l.qty })),
           fulfillment:
             fulfillment.method === "delivery"
               ? {
