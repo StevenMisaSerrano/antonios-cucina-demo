@@ -2,12 +2,18 @@ function money(n) {
   return "$" + n.toFixed(2);
 }
 
+// "Small"/"Medium"/"Large" abbreviate to their first letter, but "XL" is
+// already an abbreviation \u2014 slicing it to one letter would give "X".
+function sizeAbbrev(key) {
+  return key === "XL" ? key : key.slice(0, 1);
+}
+
 function renderMenuItem(item) {
   const hasSizes = !!item.prices;
   const optionKeys = hasSizes ? Object.keys(item.prices) : [];
   const basePrice = hasSizes ? item.prices[optionKeys[0]] : item.price;
   const priceLabel = hasSizes
-    ? optionKeys.map((k) => `${k.slice(0, 1)} ${money(item.prices[k])}`).join(" \u00b7 ")
+    ? optionKeys.map((k) => `${sizeAbbrev(k)} ${money(item.prices[k])}`).join(" \u00b7 ")
     : money(item.price);
 
   const selectId = "sel-" + item.name.replace(/[^a-z0-9]/gi, "-").toLowerCase();
